@@ -1,5 +1,13 @@
 #include "string.h"
 
+void	print_num(int n)
+{
+	char s[20];
+	int_to_ascii(n, s);
+	kprint(s);
+}
+
+
 void int_to_ascii(int n, char str[]) {
 	int i, sign;
 	if ((sign = n) < 0) n = -n;

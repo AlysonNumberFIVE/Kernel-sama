@@ -4,6 +4,7 @@
 #include "../drivers/screen.h"
 #include "../drivers/keyboard.h"
 #include "../libc/string.h"
+#include "../paging/paging.h"
 #include "timer.h"
 #include "ports.h"
 
@@ -115,10 +116,18 @@ void 	isr_handler(registers_t r) {
 	kprint(s);
 	kprint("\n");
 	kprint(exception_messages[r.int_no]);
+	if (r.int_no == 14) {
+		isr_t handle = interrupt_handlers[r.int_no];
+		handle(r);
+		
+	}
 	kprint("\n");
+	asm volatile("hlt");
 }
 
 void	register_interrupt_handler(u8 n, isr_t handler) {
+	print_num(n);
+	kprint("\n");
 	interrupt_handlers[n] = handler;
 }
 
@@ -136,6 +145,7 @@ void	irq_install() {
 	asm volatile("sti");
 	init_timer(50);
 	init_keyboard();
+	init_paging();
 }
 
 
