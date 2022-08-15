@@ -2,39 +2,11 @@
 #include "../cpu/types.h"
 #include "../libc/string.h"
 #include "../cpu/isr.h"
+#include "../libc/string.h"
 #include "../libc/function.h"
 
 extern void load_page_directory(unsigned int*);
 extern void enable_paging();
-
-void	activate_paging(u32 page_dir) {
-
-	__asm__ ("mov %0, %%cr3" : : "r" (page_dir));
-	// enable paging
-	u32 address;
-	char str2[50];
-	__asm__("mov %%cr0, %0" : "=r" (address));
-	int_to_ascii(address, str2);
-	kprint("\nstring from eax is ");
-	kprint(str2);
-	kprint("\n");
-
-	__asm__(
-           // "mov %eax, %cr3\n\t"
-            "mov %cr0, %eax\n\t"
-            "or %eax, 0x8000000\n\t"
-            "mov %eax, %cr0"
-	);
-
-	char str3[50];
-	address = 0;
-	__asm__("mov %%eax, %0" : "=r" (address));
-	int_to_ascii(address, str3);
-	kprint("\nstring from cr3 is ");
-	kprint(str3);
-	kprint("\n");
-	kprint("activation ongoing" );
-}
 
 static void page_fault(registers_t regs) {
 	kprint("Segfaiult\n");
@@ -52,26 +24,47 @@ static void page_fault(registers_t regs) {
 	kprint("\n");
 }
 
+u32 get_physical_page(int directory_index, int page_index) {
+	return ((page_index * 1024) + directory_index) * 4;
+}
 
 u32 page_directory[1024]__attribute__((aligned(4096)));
 
 void	 init_paging() {
 	register_interrupt_handler(14, page_fault);
 	
-	// u32 page_directory[1024]__attribute__((aligned(4096)));
 	int i;
 	for(i = 0; i < 1024; i++)
 		page_directory[i] = 0x00000002;
 
 	u32 first_page_table[1024] __attribute__((aligned(4096)));
-	for(i = 0; i < 1024; i++)
-		first_page_table[i] =  (i * 0x1000) | 1;
-
+	for(i = 0; i < 1024; i++) {
+		t_page page;
+		memory_set((u8 *)&page, 0, sizeof(t_page));
+		page.fields.present 		= 1;
+		page.fields.read_write 		= 1;
+		page.fields.user_supervisor = 1;
+    	page.fields.accessed        = 1; 
+    	page.fields.dirty           = 0; 
+		page.fields.address_frame   = i;
+		first_page_table[i] 		= page.bits; // (i * 0x1000) | 3;
+	
+		kprint("page :");
+		print_num((int)page.bits);
+		kprint("\nfirst_page is :");
+		print_num((int)first_page_table[i]);
+		kprint("\n");
+		// memory_copy((u8*)&first_page_table[i], (u8 *)&page, sizeof(u32));
+	}
 	page_directory[0] = ((unsigned int)first_page_table) | 3;
-
-	//init_paging(&page_directory);
-	// activate_paging(*page_directory);
-	//load_page_directory((u32)page_directory);
 	load_page_directory(page_directory);
 	enable_paging();
 }
+
+void test_page() {	
+	// t_page page = (t_page )first_page_table[0];
+	// print_num(page.bits);
+	kprint("\n");
+}
+
+

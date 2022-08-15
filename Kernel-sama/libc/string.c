@@ -1,4 +1,24 @@
+#include "../cpu/types.h"
 #include "string.h"
+
+void	print_bin(int n) 
+{
+	char s[20];
+	int i = 0;
+	while (n > 0) {
+		if (n % 2 == 0) {
+			s[i] = '0';
+		} else {
+			s[i] = '1';
+		}
+		n /= 2;
+		i++;
+	}
+	print_num(n);
+	s[i] = '\0';
+	reverse(s);
+}
+
 
 void	print_num(int n)
 {
@@ -7,6 +27,25 @@ void	print_num(int n)
 	kprint(s);
 }
 
+void hex_to_ascii(int n, char str[]) {
+    append(str, '0');
+    append(str, 'x');
+    char zeros = 0;
+
+    s32 tmp;
+    int i;
+    for (i = 28; i > 0; i -= 4) {
+        tmp = (n >> i) & 0xF;
+        if (tmp == 0 && zeros == 0) continue;
+        zeros = 1;
+        if (tmp > 0xA) append(str, tmp - 0xA + 'a');
+        else append(str, tmp + '0');
+    }
+
+    tmp = n & 0xF;
+    if (tmp >= 0xA) append(str, tmp - 0xA + 'a');
+    else append(str, tmp + '0');
+}
 
 void int_to_ascii(int n, char str[]) {
 	int i, sign;

@@ -1,0 +1,10 @@
+
+
+Translation of a virtual address to a physical address
+- Divide the virtual address into 3 sections:
+	- Most significant 10 bits (bits 22-31) specify index of page directory entry
+	- Next 10 bits specify  (bits 12-21) specifies index into page table entry
+	- Least significant 12 (bits 0-11) specifies the page's offset
+
+
+

@@ -74,6 +74,14 @@ void 	isr_install() {
 	set_idt();
 }
 
+// TODO: make a map for all interrupts in the exception_messages below
+// and map them to functions as key/value pairs here.
+typedef struct s_isr_handler_object {
+	char *message;
+	isr_t handler;
+} 	t_isr_exceptions;
+
+
 char *exception_messages[] = {
 	"Division By Zero",
 	"Debug",
@@ -119,20 +127,18 @@ void 	isr_handler(registers_t r) {
 	if (r.int_no == 14) {
 		isr_t handle = interrupt_handlers[r.int_no];
 		handle(r);
-		
 	}
 	kprint("\n");
 	asm volatile("hlt");
 }
 
 void	register_interrupt_handler(u8 n, isr_t handler) {
-	print_num(n);
-	kprint("\n");
 	interrupt_handlers[n] = handler;
 }
 
 void 	irq_handler(registers_t r) {
-	if (r.int_no >= 40) port_byte_out(0xA0, 0x20); /* slave */
+	if (r.int_no >= 40) 
+		port_byte_out(0xA0, 0x20); /* slave */
 	port_byte_out(0x20, 0x20); /* master */
 
 	if (interrupt_handlers[r.int_no] != 0) {
