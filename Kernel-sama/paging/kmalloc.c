@@ -13,7 +13,8 @@ u32	kmalloc(u32 size, int align, u32 *physical_addr)
 		free_memory += 0x1000;
 	}
 
-	if (physical_addr) *physical_addr = free_memory;
+	if (physical_addr) 
+		*physical_addr = free_memory;
 	target = free_memory;
 	free_memory += size;
 	return target;
