@@ -3,6 +3,7 @@
 #ifndef PAGING_H
 #define PAGING_H
 #include "../libc/mem.h"
+#include "kmalloc.h"
 #include "../drivers/screen.h"
 #include "../cpu/types.h"
 
@@ -21,11 +22,16 @@ typedef union s_page {
     u32 bits;
 }   t_page;
 
+typedef union s_page_table {
+    t_page pages[1024];
+}   t_page_table;
 
-typedef union s_page_dir {
-
-
+typedef struct s_page_dir {
+    t_page_table *tables[1024];
+    u32 physical_address_tables[1024];
+    u32 physical_address;
 }   t_page_dir;
+void 	paging_entry();
 
 typedef union s_page_r {
     struct {

@@ -8,8 +8,9 @@ if __name__ == "__main__":
    # print(bin(value))
    # print(bin(900))
    # value = 4294967295
-    value = (1023 * 0x1000) | 3
-    print(bin(value))
+    first = (0b100100000000001100000000 >> 8)
+    value = ((0b100100000000001100000000 >> 8) & first) & 0xff
+    print(bin(value)) 
     value = 4265
     print(bin(value))
     # mask = 900
