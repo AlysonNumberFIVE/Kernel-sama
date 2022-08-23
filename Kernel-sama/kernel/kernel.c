@@ -44,39 +44,11 @@ extern u32 *page_dir;
 void main() {
 	isr_install();
 	irq_install();
-///	u32 *ptr = (u32*)0x412341243; // unsafe
-//	u32 do_page_fault = *ptr;
 	paging_entry();
 
-	u32 address = 0;
-	u32 *ptr = (u32 *)0x13023;
-	// char str[16] = "";
-	// hex_to_ascii(str, ptr);
-	u32 page_table = (u32)page_dir[0];
-
-	// kprint("\n");
-	kprint("\n\n>> ");
-	t_page *page = (t_page*)ptr;
-	u32 mapping = page->bits >> 8;
-	mapping = ((page->bits >> 8) & mapping) & 0xff;
-	kprint("mapping is ");
-	print_num(mapping);
-	kprint("\n");
-	print_num(page->bits);
-	kprint("\n");
-	print_num(page->fields.read_write);
-	kprint("\n");
-	print_num(page->fields.present);
-	kprint("\n");
-	print_num(page->fields.read_write);
-	kprint("\n");
-	print_num(page->fields.user_supervisor);
-	kprint("\n");
-    print_num(page->fields.accessed);
-	kprint("\n");
-    print_num(page->fields.dirty);
-	// __asm__("mov %0, %%cr2" : "=r" (address));
-
+	u32 address = 0; 
+	u32 *ptr = (u32 *)0x1500301231926;
+	u32 *cause_fault = *ptr;
 }
 
 

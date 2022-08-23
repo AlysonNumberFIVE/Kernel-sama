@@ -22,33 +22,8 @@ typedef union s_page {
     u32 bits;
 }   t_page;
 
-typedef union s_page_table {
-    t_page pages[1024];
-}   t_page_table;
 
-typedef struct s_page_dir {
-    t_page_table *tables[1024];
-    u32 physical_address_tables[1024];
-    u32 physical_address;
-}   t_page_dir;
 void 	paging_entry();
-
-typedef union s_page_r {
-    struct {
-        u32 address_frame   :20; // Address
-        u32 unused          :7;
-        u32 dirty           :1;
-        u32 accessed        :1;
-        u32 user_supervisor :1;
-        u32 read_write      :1;
-        u32 present         :1;
-    } fields;
-    u32 bits;
-}   t_page_r;
-
-
-void init_paging();
-u32 get_physical_page(int directory_index, int page_index);
-void test_page();
+void 	print_page_info(u32 virtual_address);
 
 #endif
