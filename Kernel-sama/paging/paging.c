@@ -5,16 +5,9 @@
 #include "../libc/string.h"
 #include "../libc/function.h"
 
-#define INDEX_FROM_BIT(a) (a/(8*4))
-#define OFFSET_FROM_BIT(a) (a%(8*4))
-
-extern u32    free_memory;
-u32           mem_end_page = 0x1000000;
-u32           *frames;
 u32			  current_page = 1;
 extern void load_page_directory(unsigned int*);
 extern void enable_paging();
-
 
 u32 *page_dir;
 
@@ -47,7 +40,6 @@ void 	page_fault(registers_t regs) {
    int rw = regs.err_code & 0x2;           
    int us = regs.err_code & 0x4;           
    int reserved = regs.err_code & 0x8; 
-  // int id = regs.err_code & 0x10;
 
    kprint("Page fault ( ");
    if (present) kprint("present ");

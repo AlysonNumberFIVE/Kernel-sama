@@ -117,6 +117,13 @@ char *exception_messages[] = {
 	"Reserved"
 };
 
+void	trigger_interrupt(registers_t r) {
+	isr_t handle = interrupt_handlers[r.int_no];
+	switch(r.int_no) {
+		case 14: handle(r); break; 
+	}
+}
+
 void 	isr_handler(registers_t r) {
 	kprint("interrupt triggered: ");
 	char s[3];
@@ -124,10 +131,7 @@ void 	isr_handler(registers_t r) {
 	kprint(s);
 	kprint("\n");
 	kprint(exception_messages[r.int_no]);
-	if (r.int_no == 14) {
-		isr_t handle = interrupt_handlers[r.int_no];
-		handle(r);
-	}
+	trigger_interrupt(r);
 	kprint("\n");
 	asm volatile("hlt");
 }
