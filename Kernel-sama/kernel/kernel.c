@@ -44,13 +44,13 @@ extern u32 *page_dir;
 void main() {
 	isr_install();
 	irq_install();
-	paging_entry();
 
 	u32 address = 0; 
-	u32 *ptr = (u32 *)0x1500301231926;
+	u32 *ptr = (u32 *)0x15003;
 	u32 *cause_fault = *ptr;
-}
 
+
+}
 
 
 

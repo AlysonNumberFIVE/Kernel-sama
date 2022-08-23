@@ -84,7 +84,7 @@ void 	print_page_info(u32 virtual_address)
 	kprint("\n");
 }
 
-void 	paging_entry() {
+void 	init_paging() {
 
 	page_dir = (u32 *)kmalloc(sizeof(u32) * 1024, 1, (u32 *)-1);
 

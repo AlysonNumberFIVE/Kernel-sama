@@ -12,8 +12,6 @@ typedef union s_page {
     u32 present         :1; // P
     u32 read_write      :1; // R/W
     u32 user_supervisor :1; // U/S
-//    u32 write_through   :1; // PWT
-//    u32 cache_disable   :1; // PCD
     u32 accessed        :1; // A
     u32 dirty           :1; // D
     u32 unused          :7;
@@ -23,7 +21,7 @@ typedef union s_page {
 }   t_page;
 
 
-void 	paging_entry();
+void 	init_paging();
 void 	print_page_info(u32 virtual_address);
 
 #endif
