@@ -19,7 +19,7 @@ typedef union s_page {
     } fields;
     u32 bits;
 }   t_page;
-
+void    *get_physaddr(void *virtualaddr);
 
 void 	init_paging();
 void 	print_page_info(u32 virtual_address);

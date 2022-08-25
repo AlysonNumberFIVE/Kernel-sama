@@ -3,6 +3,7 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+typedef unsigned long	size_t;
 typedef unsigned int 	u32;
 typedef 	 int 	s32;
 typedef unsigned short 	u16;

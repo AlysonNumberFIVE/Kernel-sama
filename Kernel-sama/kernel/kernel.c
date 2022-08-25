@@ -7,7 +7,7 @@
 #include "../cpu/idt.h"
 #include "../libc/string.h"
 #include "../paging/paging.h"
-
+#include "../heap/heap.h"
 
 void user_input(char *input) {
 	if (strcmp(input, "END") == 0) 
@@ -41,13 +41,9 @@ void user_input(char *input) {
 
 extern u32 *page_dir;
 
-void main() {
+void main() {	
 	isr_install();
 	irq_install();
-
-	u32 address = 0; 
-	u32 *ptr = (u32 *)0x15003;
-	u32 *cause_fault = *ptr;
 
 
 }

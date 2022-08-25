@@ -5,32 +5,29 @@
 #include "../libc/string.h"
 #include "../libc/function.h"
 
-u32			  current_page = 1;
 extern void load_page_directory(unsigned int*);
 extern void enable_paging();
 
 u32 *page_dir;
 
-void	set_table() {
-	u32 *page_table = (u32 *)kmalloc(sizeof(u32) * 1024, 1, (u32 *)-1);
-	int i = 0;
-	while (i < 1024) {
-		t_page page;
+// void	set_table() {
+// 	u32 *page_table = (u32 *)kmalloc(sizeof(u32) * 1024, 1, (u32 *)-1);
+// 	int i = 0;
+// 	while (i < 1024) {
+// 		page_table[i] = (i * 0x1000) | 3;
+// 		i++;
+// 	}
 
-		memory_set((u8 *)&page, 0, sizeof(t_page));
-		page.fields.present 		= 0;
-		page.fields.read_write 		= 0;
-		page.fields.user_supervisor = 0;
-    	page.fields.accessed        = 0; 
-    	page.fields.dirty           = 0; 
-		page.fields.address_frame   = i;
-		page_table[i] = page.bits;
-		i++;
-	}
-
-	page_dir[current_page] = ((unsigned int)page_table) | 3; 
-	current_page++;
-}
+// 	page_dir[current_page] = ((unsigned int)page_table) | 3;
+// 	if (current_page == 1) {
+// 		kprint("page_dir[current_page] ");
+// 		print_num(page_dir[current_page]);
+// 		kprint("\n");
+// 	}
+// 	// print_num(page_dir[current_page]); 
+// 	// kprint("\n");
+// 	current_page++;
+// }
 
 void 	page_fault(registers_t regs) {
    u32 faulting_address;
@@ -53,17 +50,16 @@ void 	page_fault(registers_t regs) {
    kprint("\n");
 }
 
-void 	print_page_info(u32 virtual_address) 
-{
-	u32 	mapping;
+void	print_fields(t_page *page) {
 
-	u32 *ptr = (u32 *)virtual_address;
-	t_page *page = (t_page *)ptr;
-	mapping = page->bits >> 8;
-	print_num(mapping);
-	kprint("\n");
+	u32 mapping = page->bits >> 8;
 	mapping = ((page->bits >> 8) & mapping) & 0xff;
 	page->bits = mapping;
+
+	kprint("Total value is ");
+	print_num(page->bits);
+	kprint("\n");
+
 	kprint("present : ");
 	print_num(page->fields.present);
 	kprint("\n");
@@ -81,37 +77,40 @@ void 	print_page_info(u32 virtual_address)
 
 	kprint("dirty : ");
     print_num(page->fields.dirty);
-	kprint("\n");
+	kprint("\n");	
+}
+
+void 	print_page_info(u32 virtual_address) 
+{
+	u32 	mapping;
+
+	u32 *ptr = (u32 *)virtual_address;
+	t_page *page = (t_page *)ptr;
+	page->bits = mapping;
+	print_fields(page);
 }
 
 void 	init_paging() {
-
-	page_dir = (u32 *)kmalloc(sizeof(u32) * 1024, 1, (u32 *)-1);
-
-	int i = 0;
+	page_dir 			= (u32 *)kmalloc(sizeof(u32) * 1024, 1, (u32 *)-1);
+	u32	current_page 	= 0;
+	int i 				= 0;
+	
 	while (i < 1024) {
 		page_dir[i] = 0x00000002; 
 		i++;
 	}
 
-	u32 tmp;
-	u32 *page_table = (u32 *)kmalloc(sizeof(u32) * 1024, 1, &tmp);
-	for(i = 0; i < 1024; i++) {
-		t_page page;
-
-		memory_set((u8 *)&page, 0, sizeof(t_page));
-		page.fields.present 		= 1;
-		page.fields.read_write 		= 0;
-		page.fields.user_supervisor = 0;
-    	page.fields.accessed        = 1; 
-    	page.fields.dirty           = 0; 
-		page.fields.address_frame   = i;
-		page_table[i] = page.bits;
-	}
-	page_dir[0] = ((unsigned int)page_table) | 3;
 	while (current_page < 1024) {
-		set_table();
+		u32 *page_table = (u32 *)kmalloc(sizeof(u32) * 1024, 1, (u32 *)-1);
+		
+		for(i = 0; i < 1024; i++) {
+			page_table[i] = (i * 0x1000) | 3;
+		}
+
+		page_dir[current_page] = ((unsigned int)page_table) | 3;
+		current_page++;
 	}
+
 	load_page_directory(page_dir);
 	enable_paging();
 	register_interrupt_handler(14, page_fault);
