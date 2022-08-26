@@ -1,5 +1,6 @@
 
 
+#include "../heap/heap.h"
 #include "../paging/kmalloc.h"
 #include "../drivers/keyboard.h"
 #include "../drivers/screen.h"
@@ -40,12 +41,17 @@ void user_input(char *input) {
 }
 
 extern u32 *page_dir;
+extern t_heap_block *heap;
 
-void main() {	
+void main() {
 	isr_install();
 	irq_install();
+	memory_set((u8*)heap, 0, sizeof(t_heap_block));
 
-
+	mallock(42);
+	mallock(42);
+	mallock(42);
+	print_heap();
 }
 
 

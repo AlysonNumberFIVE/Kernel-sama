@@ -1,6 +1,41 @@
 #include "../cpu/types.h"
 #include "string.h"
 
+int	hexlength(int number)
+{
+	int length;
+
+	length = 0;
+	while (number > 0)
+	{
+		number /= 16;
+		length++;
+	}
+	return (length);
+}
+
+void	int_to_hex(int number)
+{
+	static char	hexadecimal[] = "0123456789abcdef";
+	int		c;
+	char		str[hexlength(number)];
+	int		size;
+
+	size = hexlength(number);
+	str[size] = '\0';
+	size--;
+	while (number > 0)
+	{
+		c = number % 16;
+		str[size] = hexadecimal[c];
+		size--;
+		number /= 16;
+	}
+	kprint("0x");
+	kprint(str);
+}
+
+
 void	print_bin(int n) 
 {
 	char s[20];
